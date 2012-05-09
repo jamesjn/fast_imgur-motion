@@ -1,5 +1,13 @@
 class ImgurUploaderController < UIViewController
+  extend FilterDetail 
+
   attr_accessor :viewImageView
+
+  def viewWillAppear(animated)
+    navigationItem.title = 'Imgur file uploader' 
+    navigationItem.leftBarButtonItem = UIBarButtonItem.alloc.initWithTitle("Filter", style:UIBarButtonItemStylePlain, target:self, action:'filterImage')
+    navigationItem.rightBarButtonItem = UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemAdd, target:self, action:'seeList')
+  end
 
   def viewDidLoad
     @items = []
@@ -38,62 +46,20 @@ class ImgurUploaderController < UIViewController
     view.addSubview(@filter_button)
   end
 
-  def filter_image
-    gray_copy = create_gray_copy(@viewImageView.image)
-    @viewImageView.image = gray_copy
-  end
+  def filterImage
 
-  def create_gray_copy(image)
-    cgImage = image.CGImage
-    provider = CGImageGetDataProvider(cgImage)
-    bitmapData = CGDataProviderCopyData(provider)
-    data = CFDataGetBytePtr(bitmapData)
-p data
+    filteredImage = CIImage.alloc.initWithCGImage(@viewImageView.image.CGImage, options:nil)
+    filter = CIFilter.filterWithName("CISepiaTone")
+    filter.setDefaults()
+    filter.setValue(filteredImage, forKey:"inputImage")
+    filter.setValue(NSNumber.numberWithFloat(1.0), forKey:"inputIntensity")
+    outputImage = filter.valueForKey("outputImage")
+    
+    context = CIContext.contextWithOptions(nil)
 
-    width = image.size.width
-    height = image.size.height
-    myDataLength = width * height * 4;
-
-    0.step(myDataLength, 4) do |i|
-      r_pixel = data[i].bytes.first
-      g_pixel = data[i+1].bytes.first
-      b_pixel = data[i+2].bytes.first
-
-      outputRed = (r_pixel * 0.393) + (g_pixel *0.769) + (b_pixel * 0.189);
-      outputGreen = (r_pixel * 0.349) + (g_pixel *0.686) + (b_pixel * 0.168);
-      outputBlue = (r_pixel * 0.272) + (g_pixel *0.534) + (b_pixel * 0.131);
-
-      if(outputRed>255)
-        outputRed=255
-      end
-      if(outputGreen>255)
-        outputGreen=255
-      end
-      if(outputBlue>255)
-        outputBlue=255
-      end
-
-      data[i] = outputRed.to_s(16)
-      data[i+1] = outputGreen.to_s(16)
-      data[i+2] = outputBlue.to_s(16)
-    end
-
-    provider2 = CGDataProviderCreateWithData(NULL, data, myDataLength, NULL)
-    bitsPerComponent = 8
-    bitsPerPixel = 32
-    bytesPerRow = 4 * width
-    ceRef colorSpaceRef = CGColorSpaceCreateDeviceRGB()
-    bitmapInfo = kCGBitmapByteOrderDefault
-    renderingIntent = kCGRenderingIntentDefault
-    imageRef = CGImageCreate(width, height, bitsPerComponent, bitsPerPixel, bytesPerRow, colorSpaceRef, bitmapInfo, provider2, NULL, NO, renderingIntent)
-
-    CGColorSpaceRelease(colorSpaceRef)
-    CGDataProviderRelease(provider2)
-    CFRelease(bitmapData)
-
-    sepiaImage = UIImage.imageWithCGImage(imageRef)
-    CGImageRelease(imageRef)
-    sepiaImage
+    imgRef = context.createCGImage(outputImage, fromRect:(outputImage.extent))
+    originalOrientation = @viewImageView.image.imageOrientation
+    @viewImageView.image = UIImage.alloc.initWithCGImage(imgRef, scale:1.0, orientation:originalOrientation)
   end
 
   def uploadImgur
@@ -117,11 +83,6 @@ p data
     imagePicker.mediaTypes = [KUTTypeImage]
     imagePicker.delegate = self
     presentModalViewController(imagePicker, animated:true)
-  end
-
-  def viewWillAppear(animated)
-    navigationItem.title = 'Imgur file uploader' 
-    navigationItem.rightBarButtonItem = UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemAdd, target:self, action:'seeList')
   end
 
   def imagePickerController(picker, didFinishPickingMediaWithInfo:info)
