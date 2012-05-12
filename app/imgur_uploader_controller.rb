@@ -10,10 +10,28 @@ class ImgurUploaderController < UIViewController
     self
   end
 
+  def mailComposeController(controller, didFinishWithResult:result, error:error)
+    self.dismissModalViewControllerAnimated(true)
+  end
+
+  def sendEmail
+    if(MFMailComposeViewController.canSendMail) 
+      mailer = MFMailComposeViewController.alloc.init
+      mailer.mailComposeDelegate = self
+      mailer.setSubject("Email from imgur")
+      emailBody = @url_label.text
+      mailer.setMessageBody(emailBody, isHTML:false)
+      self.presentModalViewController(mailer, animated:true)
+    else
+      alert = UIAlertView.alloc.initWithTitle("Failure", message:"Your device can't send me", delegate:nil, cancelButton:"Ok", otherButtonTitles:nil)
+      alert.show
+    end
+  end
+
   def viewWillAppear(animated)
     self.parentViewController.navigationItem.title = 'Imgur file uploader' 
     self.parentViewController.navigationItem.leftBarButtonItem = UIBarButtonItem.alloc.initWithTitle("New", style:UIBarButtonItemStylePlain, target:self, action:'newImage')
-    self.parentViewController.navigationItem.rightBarButtonItem = UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemAdd, target:self, action:'seeList')
+    self.parentViewController.navigationItem.rightBarButtonItem = UIBarButtonItem.alloc.initWithTitle("Email", style:UIBarButtonItemStylePlain, target:self, action:'sendEmail')
   end
 
   def viewDidLoad

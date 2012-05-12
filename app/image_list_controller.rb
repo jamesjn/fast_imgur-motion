@@ -12,9 +12,9 @@ class ImageListController < UITableViewController
   end 
 
   def viewWillAppear(animated)
-    navigationItem.title = 'Locations' 
-    navigationItem.rightBarButtonItem = editButtonItem
-    #navigationItem.rightBarButtonItem = UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemAdd, target:self, action:'addImageItem')
+    self.parentViewController.navigationItem.title = 'Image List' 
+    self.parentViewController.navigationItem.leftBarButtonItem = editButtonItem
+    self.parentViewController.navigationItem.rightBarButtonItem = UIBarButtonItem.alloc.initWithTitle("Clear", style:UIBarButtonItemStylePlain, target:self, action:'clearItems')
     @items = []
     5.times do 
       addImageItem
