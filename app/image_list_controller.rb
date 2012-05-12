@@ -1,4 +1,5 @@
 class ImageListController < UITableViewController
+  attr_accessor :imgur_list
   
   def init
     if super
@@ -15,10 +16,12 @@ class ImageListController < UITableViewController
     self.parentViewController.navigationItem.title = 'Image List' 
     self.parentViewController.navigationItem.leftBarButtonItem = editButtonItem
     self.parentViewController.navigationItem.rightBarButtonItem = UIBarButtonItem.alloc.initWithTitle("Clear", style:UIBarButtonItemStylePlain, target:self, action:'clearItems')
+
     @items = []
-    5.times do 
-      addImageItem
+    @imgur_list.each do |item|
+      @items << item 
     end
+    view.reloadData
   end
 
   def tableView(tableView, numberOfRowsInSection:section)

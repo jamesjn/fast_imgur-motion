@@ -1,31 +1,13 @@
 class ImgurUploaderController < UIViewController
   extend FilterDetail 
-
   attr_accessor :viewImageView
+  attr_accessor :imgur_list
 
   def init
     if super
       self.tabBarItem = UITabBarItem.alloc.initWithTitle('Uploader', image:nil, tag:1)
     end
     self
-  end
-
-  def mailComposeController(controller, didFinishWithResult:result, error:error)
-    self.dismissModalViewControllerAnimated(true)
-  end
-
-  def sendEmail
-    if(MFMailComposeViewController.canSendMail) 
-      mailer = MFMailComposeViewController.alloc.init
-      mailer.mailComposeDelegate = self
-      mailer.setSubject("Email from imgur")
-      emailBody = @url_label.text
-      mailer.setMessageBody(emailBody, isHTML:false)
-      self.presentModalViewController(mailer, animated:true)
-    else
-      alert = UIAlertView.alloc.initWithTitle("Failure", message:"Your device can't send me", delegate:nil, cancelButton:"Ok", otherButtonTitles:nil)
-      alert.show
-    end
   end
 
   def viewWillAppear(animated)
@@ -113,6 +95,7 @@ class ImgurUploaderController < UIViewController
 
   def imageUploadedWithURLString(image_url) 
     @url_label.text = image_url 
+    @imgur_list << image_url
   end
 
   def useCamera
@@ -134,14 +117,24 @@ class ImgurUploaderController < UIViewController
     dismissModalViewControllerAnimated(true)
   end
 
-  def seeList
-    7.times do
-      addImageItem
-    end
-    image_list_controller = ImageListController.alloc.init
-    image_list_controller.setItems(@items)
-    navigationController.pushViewController(image_list_controller, animated:true)
+  def mailComposeController(controller, didFinishWithResult:result, error:error)
+    self.dismissModalViewControllerAnimated(true)
   end
+
+  def sendEmail
+    if(MFMailComposeViewController.canSendMail) 
+      mailer = MFMailComposeViewController.alloc.init
+      mailer.mailComposeDelegate = self
+      mailer.setSubject("Email from imgur")
+      emailBody = @url_label.text
+      mailer.setMessageBody(emailBody, isHTML:false)
+      self.presentModalViewController(mailer, animated:true)
+    else
+      alert = UIAlertView.alloc.initWithTitle("Failure", message:"Your device can't send me", delegate:nil, cancelButton:"Ok", otherButtonTitles:nil)
+      alert.show
+    end
+  end
+
 
   private
 
