@@ -3,10 +3,17 @@ class ImgurUploaderController < UIViewController
 
   attr_accessor :viewImageView
 
+  def init
+    if super
+      self.tabBarItem = UITabBarItem.alloc.initWithTitle('Uploader', image:nil, tag:1)
+    end
+    self
+  end
+
   def viewWillAppear(animated)
-    navigationItem.title = 'Imgur file uploader' 
-    navigationItem.leftBarButtonItem = UIBarButtonItem.alloc.initWithTitle("Filter", style:UIBarButtonItemStylePlain, target:self, action:'filterImage')
-    navigationItem.rightBarButtonItem = UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemAdd, target:self, action:'seeList')
+    self.parentViewController.navigationItem.title = 'Imgur file uploader' 
+    self.parentViewController.navigationItem.leftBarButtonItem = UIBarButtonItem.alloc.initWithTitle("New", style:UIBarButtonItemStylePlain, target:self, action:'newImage')
+    self.parentViewController.navigationItem.rightBarButtonItem = UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemAdd, target:self, action:'seeList')
   end
 
   def viewDidLoad
@@ -30,19 +37,19 @@ class ImgurUploaderController < UIViewController
     button_load = UIButton.buttonWithType(UIButtonTypeRoundedRect)
     button_load.setTitle('Camera', forState:UIControlStateNormal)
     button_load.addTarget(self, action:'useCamera', forControlEvents:UIControlEventTouchUpInside)
-    button_load.frame = [[50, 300],[75,50]]
+    button_load.frame = [[10, 300],[75,25]]
     view.addSubview(button_load)
 
     upload_imgur_button = UIButton.buttonWithType(UIButtonTypeRoundedRect)
     upload_imgur_button.setTitle('Imgur', forState:UIControlStateNormal)
     upload_imgur_button.addTarget(self, action:'uploadImgur', forControlEvents:UIControlEventTouchUpInside)
-    upload_imgur_button.frame = [[150, 300],[75,50]]
+    upload_imgur_button.frame = [[110, 300],[75,25]]
     view.addSubview(upload_imgur_button)
 
     @filter_button = UIButton.buttonWithType(UIButtonTypeRoundedRect)
     @filter_button.setTitle('b/w filter', forState:UIControlStateNormal)
-    @filter_button.addTarget(self, action:'filter_image', forControlEvents:UIControlEventTouchUpInside)
-    @filter_button.frame = [[250,300],[75,50]]
+    @filter_button.addTarget(self, action:'filterImage', forControlEvents:UIControlEventTouchUpInside)
+    @filter_button.frame = [[210,300],[75,25]]
     view.addSubview(@filter_button)
   end
 

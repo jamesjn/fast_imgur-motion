@@ -1,4 +1,12 @@
 class ImageListController < UITableViewController
+  
+  def init
+    if super
+      self.tabBarItem = UITabBarItem.alloc.initWithTitle('List', image:nil, tag:2)
+    end
+    self
+  end
+
   def viewDidLoad
     view.dataSource = view.delegate = self
   end 
@@ -7,6 +15,7 @@ class ImageListController < UITableViewController
     navigationItem.title = 'Locations' 
     navigationItem.rightBarButtonItem = editButtonItem
     #navigationItem.rightBarButtonItem = UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemAdd, target:self, action:'addImageItem')
+    @items = []
     5.times do 
       addImageItem
     end
