@@ -69,6 +69,24 @@ class ImgurUploaderController < UIViewController
     @filter_button.addTarget(self, action:'filterImage', forControlEvents:UIControlEventTouchUpInside)
     @filter_button.frame = [[210,300],[75,25]]
     view.addSubview(@filter_button)
+
+    tb = UIToolbar.alloc.init
+    tb.frame = [[0,0],[320,44]]
+    tb.center = [160,22] 
+    tbitems = NSMutableArray.array
+    
+    barbutton1 = UIBarButtonItem.alloc.initWithTitle("sephia", style:UIBarButtonItemStylePlain, target:self, action:'doSephia')
+    barbutton2 = UIBarButtonItem.alloc.initWithTitle("b/w", style:UIBarButtonItemStylePlain, target:self, action:'doBW')
+    tbitems.addObject(barbutton1)
+    tbitems.addObject(barbutton2)
+
+    bbi = UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemFixedSpace, target:nil, action:nil)
+    bbi.width = 20
+    tbitems.addObject(bbi)
+
+    tb.items = tbitems
+    self.view.addSubview(tb)
+
   end
 
   def filterImage
