@@ -19,8 +19,8 @@ class ImgurUploaderController < UIViewController
   def viewDidLoad
     @items = []
     @viewImageView = UIImageView.alloc.init
-    @viewImageView.image = load_picture_from "http://i.imgur.com/bbg8Y.jpg"
-    @viewImageView.frame = [[10,50],[300,200]]
+    #@viewImageView.image = load_picture_from "http://i.imgur.com/bbg8Y.jpg"
+    @viewImageView.frame = [[50,50],[150,200]]
     view.addSubview(@viewImageView)
 
     url_label = UILabel.new
@@ -111,9 +111,27 @@ class ImgurUploaderController < UIViewController
     presentModalViewController(imagePicker, animated:true)
   end
 
+  def scaleToSize(image, size)
+    UIGraphicsBeginImageContext(size)
+    #context = UIGraphicsGetCurrentContext();
+    #CGContextTranslateCTM(context, 0.0, size[1])
+    #CGContextScaleCTM(context, 1.0, -1.0)
+
+    #image.drawInRect([0,0], size])
+    #CGContextDrawImage(context, CGRectMake(0, 0, 480, 640), image.CGImage) 
+    image.drawInRect([[0,0], size])
+    scaledImage = UIGraphicsGetImageFromCurrentImageContext()
+
+    UIGraphicsEndImageContext()
+    
+    scaledImage
+  end
+
   def imagePickerController(picker, didFinishPickingMediaWithInfo:info)
     image = info.objectForKey(UIImagePickerControllerOriginalImage)
-    @viewImageView.setImage(image)
+    smaller_image = scaleToSize(image, [480, 640])
+    #smaller_image = UIImage.imageWithCGImage(image.CGImage, scale:0.1, orientation:(image.imageOrientation))
+    @viewImageView.setImage(smaller_image)
     dismissModalViewControllerAnimated(true)
   end
 

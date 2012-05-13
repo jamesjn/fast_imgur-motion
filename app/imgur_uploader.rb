@@ -9,7 +9,7 @@ class ImgurUploader
   end
 
   def uploadImage image
-    imageData = UIImageJPEGRepresentation(image, 0.3) 
+    imageData = UIImagePNGRepresentation(image) 
     imageStr = imageData.base64Encoding
     #image64Bstr = [imageStr].pack('m')
     imageStr = cgi_escape(imageStr)
