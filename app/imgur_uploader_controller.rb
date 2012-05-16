@@ -90,12 +90,18 @@ class ImgurUploaderController < UIViewController
     originalOrientation = @viewImageView.image.imageOrientation
     @viewImageView.image = UIImage.alloc.initWithCGImage(imgRef, scale:1.0, orientation:originalOrientation)
   end
+  
+  def stop_animating
+    @activity_indicator.stopAnimating
+  end
 
   def uploadImgur
     @activity_indicator.startAnimating
-    imgur_uploader = ImgurUploader.alloc.init
-    imgur_uploader.delegate = self
-    imgur_uploader.uploadImage(@viewImageView.image)
+    Dispatch::Queue.concurrent.async do 
+      imgur_uploader = ImgurUploader.alloc.init
+      imgur_uploader.delegate = self
+      imgur_uploader.uploadImage(@viewImageView.image)
+    end
   end
 
   def imageUploadedWithURLString(image_url) 

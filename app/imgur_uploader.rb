@@ -15,14 +15,16 @@ class ImgurUploader
     imageStr = cgi_escape(imageStr)
     NSLog("%@", imageStr)
     #uploadCall = NSString.stringWithFormat("key=b1507316815a853a7a23318ff905a486&image=%@", imageStr)
-    uploadCall = "key=b1507316815a853a7a23318ff905a486&image="+imageStr
-    request = NSMutableURLRequest.requestWithURL(NSURL.URLWithString("http://api.imgur.com/2/upload"))
-    request.setHTTPMethod("POST")
-    request.setValue(NSString.stringWithFormat("%d", uploadCall.length), forHTTPHeaderField:("Content-length"))
-    request.setHTTPBody(uploadCall.dataUsingEncoding(NSUTF8StringEncoding))
-    theConnection = NSURLConnection.alloc.initWithRequest(request, delegate:self)
-    if(theConnection)
-      @receivedData = NSMutableData.data
+    Dispatch::Queue.main.async do
+      uploadCall = "key=b1507316815a853a7a23318ff905a486&image="+imageStr
+      request = NSMutableURLRequest.requestWithURL(NSURL.URLWithString("http://api.imgur.com/2/upload"))
+      request.setHTTPMethod("POST")
+      request.setValue(NSString.stringWithFormat("%d", uploadCall.length), forHTTPHeaderField:("Content-length"))
+      request.setHTTPBody(uploadCall.dataUsingEncoding(NSUTF8StringEncoding))
+      theConnection = NSURLConnection.alloc.initWithRequest(request, delegate:self)
+      if(theConnection)
+        @receivedData = NSMutableData.data
+      end
     end
   end
 
