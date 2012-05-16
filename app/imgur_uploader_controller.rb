@@ -69,6 +69,10 @@ class ImgurUploaderController < UIViewController
     tb.items = tbitems
     self.view.addSubview(tb)
 
+    @activity_indicator = UIActivityIndicatorView.alloc.initWithActivityIndicatorStyle(UIActivityIndicatorViewStyleWhiteLarge)
+    @activity_indicator.frame = [[120,330],[50,50]]
+    @activity_indicator 
+    view.addSubview(@activity_indicator)
   end
 
   def filterImage
@@ -88,12 +92,14 @@ class ImgurUploaderController < UIViewController
   end
 
   def uploadImgur
+    @activity_indicator.startAnimating
     imgur_uploader = ImgurUploader.alloc.init
     imgur_uploader.delegate = self
     imgur_uploader.uploadImage(@viewImageView.image)
   end
 
   def imageUploadedWithURLString(image_url) 
+    @activity_indicator.stopAnimating
     @url_label.text = image_url 
     @imgur_list << image_url
   end
