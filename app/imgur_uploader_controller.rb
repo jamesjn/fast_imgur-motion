@@ -56,10 +56,16 @@ class ImgurUploaderController < UIViewController
     tb.center = [160,22] 
     tbitems = NSMutableArray.array
     
-    barbutton1 = UIBarButtonItem.alloc.initWithTitle("sephia", style:UIBarButtonItemStylePlain, target:self, action:'doSephia')
-    barbutton2 = UIBarButtonItem.alloc.initWithTitle("b/w", style:UIBarButtonItemStylePlain, target:self, action:'doBW')
+    barbutton1 = UIBarButtonItem.alloc.initWithTitle("sephia", style:UIBarButtonItemStylePlain, target:self, action:'filterImageSephia')
+    barbutton2 = UIBarButtonItem.alloc.initWithTitle("invert", style:UIBarButtonItemStylePlain, target:self, action:'filterImageInvert')
+    barbutton3 = UIBarButtonItem.alloc.initWithTitle("Color", style:UIBarButtonItemStylePlain, target:self, action:'filterImageColor')
+    barbutton4 = UIBarButtonItem.alloc.initWithTitle("Gamma", style:UIBarButtonItemStylePlain, target:self, action:'filterImageGamma')
+    barbutton5 = UIBarButtonItem.alloc.initWithTitle("Hue", style:UIBarButtonItemStylePlain, target:self, action:'filterImageHue')
     tbitems.addObject(barbutton1)
     tbitems.addObject(barbutton2)
+    tbitems.addObject(barbutton3)
+    tbitems.addObject(barbutton4)
+    tbitems.addObject(barbutton5)
 
     bbi = UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemFixedSpace, target:nil, action:nil)
     bbi.width = 20
@@ -74,8 +80,68 @@ class ImgurUploaderController < UIViewController
     view.addSubview(@activity_indicator)
   end
 
-  def filterImage
+  def filterImageHue
+    filteredImage = CIImage.alloc.initWithCGImage(@viewImageView.image.CGImage, options:nil)
+    filter = CIFilter.filterWithName("CIHueAdjust")
+    filter.setDefaults()
+    filter.setValue(filteredImage, forKey:"inputImage")
+    filter.setValue(NSNumber.numberWithFloat(3.0), forKey:"inputAngle")
+    outputImage = filter.valueForKey("outputImage")
+    
+    context = CIContext.contextWithOptions(nil)
 
+    imgRef = context.createCGImage(outputImage, fromRect:(outputImage.extent))
+    originalOrientation = @viewImageView.image.imageOrientation
+    @viewImageView.image = UIImage.alloc.initWithCGImage(imgRef, scale:1.0, orientation:originalOrientation)
+  end
+
+  def filterImageGamma
+    filteredImage = CIImage.alloc.initWithCGImage(@viewImageView.image.CGImage, options:nil)
+    filter = CIFilter.filterWithName("CIGammaAdjust")
+    filter.setDefaults()
+    filter.setValue(filteredImage, forKey:"inputImage")
+    filter.setValue(NSNumber.numberWithFloat(2.0), forKey:"inputPower")
+    outputImage = filter.valueForKey("outputImage")
+    
+    context = CIContext.contextWithOptions(nil)
+
+    imgRef = context.createCGImage(outputImage, fromRect:(outputImage.extent))
+    originalOrientation = @viewImageView.image.imageOrientation
+    @viewImageView.image = UIImage.alloc.initWithCGImage(imgRef, scale:1.0, orientation:originalOrientation)
+  end
+
+  def filterImageColor
+    filteredImage = CIImage.alloc.initWithCGImage(@viewImageView.image.CGImage, options:nil)
+    filter = CIFilter.filterWithName("CIColorControls")
+    filter.setDefaults()
+    filter.setValue(filteredImage, forKey:"inputImage")
+    filter.setValue(NSNumber.numberWithFloat(2.0), forKey:"inputSaturation")
+    filter.setValue(NSNumber.numberWithFloat(1.0), forKey:"inputBrightness")
+    filter.setValue(NSNumber.numberWithFloat(2.0), forKey:"inputContrast")
+    outputImage = filter.valueForKey("outputImage")
+    
+    context = CIContext.contextWithOptions(nil)
+
+    imgRef = context.createCGImage(outputImage, fromRect:(outputImage.extent))
+    originalOrientation = @viewImageView.image.imageOrientation
+    @viewImageView.image = UIImage.alloc.initWithCGImage(imgRef, scale:1.0, orientation:originalOrientation)
+  end
+
+  def filterImageInvert
+    filteredImage = CIImage.alloc.initWithCGImage(@viewImageView.image.CGImage, options:nil)
+    filter = CIFilter.filterWithName("CIColorInvert")
+    filter.setDefaults()
+    filter.setValue(filteredImage, forKey:"inputImage")
+    outputImage = filter.valueForKey("outputImage")
+    
+    context = CIContext.contextWithOptions(nil)
+
+    imgRef = context.createCGImage(outputImage, fromRect:(outputImage.extent))
+    originalOrientation = @viewImageView.image.imageOrientation
+    @viewImageView.image = UIImage.alloc.initWithCGImage(imgRef, scale:1.0, orientation:originalOrientation)
+  end
+
+  def filterImageSephia
     filteredImage = CIImage.alloc.initWithCGImage(@viewImageView.image.CGImage, options:nil)
     filter = CIFilter.filterWithName("CISepiaTone")
     filter.setDefaults()
