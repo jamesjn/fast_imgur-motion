@@ -2,7 +2,6 @@ class ImgurUploaderController < UIViewController
   extend FilterDetail 
   attr_accessor :viewImageView
   attr_accessor :imgur_list
-  attr_accessor :items
 
   def init
     if super
@@ -18,7 +17,6 @@ class ImgurUploaderController < UIViewController
   end
 
   def viewDidLoad
-    @items = []
     @viewImageView = UIImageView.alloc.init
     #@viewImageView.image = load_picture_from "http://i.imgur.com/bbg8Y.jpg"
     @viewImageView.frame = [[50,50],[150,200]]
@@ -174,10 +172,4 @@ class ImgurUploaderController < UIViewController
     @image = UIImage.imageWithData(NSData.dataWithContentsOfURL(url))
   end
 
-  def addImageItem
-    @item = [] if @item.nil?
-    url = "http://i.imgur.com/bbg8Y.jpg"
-    @items << url
-  end
-  
 end
