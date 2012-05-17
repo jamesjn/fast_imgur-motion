@@ -1,0 +1,4 @@
+class ImgurItem < NSObject
+
+
+end

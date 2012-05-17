@@ -2,6 +2,7 @@ class ImgurUploaderController < UIViewController
   extend FilterDetail 
   attr_accessor :viewImageView
   attr_accessor :imgur_list
+  attr_accessor :items
 
   def init
     if super

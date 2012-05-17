@@ -6,12 +6,12 @@ class AppDelegate
     imgur_list = []
 
     image_list_controller = ImageListController.alloc.init
-    imgur_uploader_controller = ImgurUploaderController.alloc.init 
-    imgur_uploader_controller.imgur_list = imgur_list
+    @imgur_uploader_controller = ImgurUploaderController.alloc.init 
+    @imgur_uploader_controller.imgur_list = imgur_list
     image_list_controller.imgur_list = imgur_list
 
     tabbar = UITabBarController.alloc.init
-    tabbar.viewControllers = [imgur_uploader_controller, image_list_controller]
+    tabbar.viewControllers = [@imgur_uploader_controller, image_list_controller]
     tabbar.selectedIndex = 0 
 
     nav = UINavigationController.alloc.initWithRootViewController(tabbar)
@@ -21,4 +21,21 @@ class AppDelegate
     @window.makeKeyAndVisible
     return true
   end
+
+  def itemArchivePath
+    documentDirectories = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, true)
+    documentDirectory = documentDirectories.objectAtIndex(0)
+    documentDirectory.stringByAppendingPathComponents("items.archive")
+  end
+
+  def applicationDidEnterBackground(app)
+    path = itemArchivePath 
+    success = NSKeyedArchiver.archiveRootObject(@imgur_uploader_controller.items, toFile:path)
+    if success
+      p "saved all items"
+    else
+      p "did not save"
+    end
+  end
+  
 end

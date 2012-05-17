@@ -15,7 +15,7 @@ class ImgurUploader
     imageStr = cgi_escape(imageStr)
     NSLog("%@", imageStr)
     #uploadCall = NSString.stringWithFormat("key=b1507316815a853a7a23318ff905a486&image=%@", imageStr)
-    Dispatch::Queue.main.async do
+    Dispatch::Queue.main.sync do
       uploadCall = "key=b1507316815a853a7a23318ff905a486&image="+imageStr
       request = NSMutableURLRequest.requestWithURL(NSURL.URLWithString("http://api.imgur.com/2/upload"))
       request.setHTTPMethod("POST")

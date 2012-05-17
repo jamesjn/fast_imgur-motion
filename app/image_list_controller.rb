@@ -52,6 +52,13 @@ class ImageListController < UITableViewController
     @items = items
   end
 
+  def tableView(tableView, didSelectRowAtIndexPath:indexPath)
+    item = @items[indexPath.row]
+    image_controller = ImageViewController.alloc.init
+    image_controller.image_url = item
+    navigationController.pushViewController(image_controller, animated:true)
+  end
+
   private
 
   def addImageItem
