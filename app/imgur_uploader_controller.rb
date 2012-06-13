@@ -5,7 +5,7 @@ class ImgurUploaderController < UIViewController
 
   def init
     if super
-      self.tabBarItem = UITabBarItem.alloc.initWithTitle('Uploader', image:nil, tag:1)
+      self.tabBarItem = UITabBarItem.alloc.initWithTitle('Uploader', image:UIImage.imageNamed('arrowup.png'), tag:1)
     end
     self
   end
@@ -52,7 +52,7 @@ class ImgurUploaderController < UIViewController
     view.addSubview(@filter_button)
 
     tb = UIToolbar.alloc.init
-    tb.frame = [[0,0],[320,44]]
+    tb.frame = [[0,0],[320,30]]
     tb.center = [160,22] 
     tbitems = NSMutableArray.array
     
@@ -68,7 +68,7 @@ class ImgurUploaderController < UIViewController
     tbitems.addObject(barbutton5)
 
     bbi = UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemFixedSpace, target:nil, action:nil)
-    bbi.width = 20
+    bbi.width = 10 
     tbitems.addObject(bbi)
 
     tb.items = tbitems
