@@ -3,7 +3,7 @@ class ImageListController < UITableViewController
   
   def init
     if super
-      self.tabBarItem = UITabBarItem.alloc.initWithTitle('List', image:UIImage.imageNamed('list.png'), tag:2)
+      self.tabBarItem = UITabBarItem.alloc.initWithTitle('List', image:nil, tag:2)
     end
     self
   end
