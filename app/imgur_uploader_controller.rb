@@ -160,13 +160,37 @@ class ImgurUploaderController < UIViewController
     @activity_indicator.stopAnimating
   end
 
+  def cgi_escape(str)
+    str.gsub(/([^ a-zA-Z0-9_.-]+)/) do
+      '%' + $1.unpack('H2' * $1.bytesize).join('%').upcase
+    end.tr(' ', '+')
+  end
+
   def uploadImgur
     @activity_indicator.startAnimating
-    Dispatch::Queue.concurrent.async do 
-      imgur_uploader = ImgurUploader.alloc.init
-      imgur_uploader.delegate = self
-      imgur_uploader.uploadImage(@viewImageView.image)
+    imageData = UIImagePNGRepresentation(@viewImageView.image) 
+    imageStr = imageData.base64Encoding
+    #image64Bstr = [imageStr].pack('m')
+    imageStr = cgi_escape(imageStr)
+    data = {key:'b1507316815a853a7a23318ff905a486', image:imageStr}
+p "HEEEEEEEEEEEEEEELLLLO"
+    BubbleWrap::HTTP.post("http://api.imgur.com/2/upload.json", {payload: data}) do |response|
+      if response.ok?
+        returned_str = response.body.to_str
+        p returned_str
+        json = BubbleWrap::JSON.parse(returned_str)
+        p json
+        original = json["upload"]["links"]["original"]
+        imageUploadedWithURLString(original)
+      else
+        alert(response.error_message)
+      end
     end
+    #Dispatch::Queue.concurrent.async do 
+    #  imgur_uploader = ImgurUploader.alloc.init
+    #  imgur_uploader.delegate = self
+    #  imgur_uploader.uploadImage(@viewImageView.image)
+    #end
   end
 
   def imageUploadedWithURLString(image_url) 

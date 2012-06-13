@@ -13,19 +13,33 @@ class ImgurUploader
     imageStr = imageData.base64Encoding
     #image64Bstr = [imageStr].pack('m')
     imageStr = cgi_escape(imageStr)
-    NSLog("%@", imageStr)
-    #uploadCall = NSString.stringWithFormat("key=b1507316815a853a7a23318ff905a486&image=%@", imageStr)
-    Dispatch::Queue.main.sync do
-      uploadCall = "key=b1507316815a853a7a23318ff905a486&image="+imageStr
-      request = NSMutableURLRequest.requestWithURL(NSURL.URLWithString("http://api.imgur.com/2/upload"))
-      request.setHTTPMethod("POST")
-      request.setValue(NSString.stringWithFormat("%d", uploadCall.length), forHTTPHeaderField:("Content-length"))
-      request.setHTTPBody(uploadCall.dataUsingEncoding(NSUTF8StringEncoding))
-      theConnection = NSURLConnection.alloc.initWithRequest(request, delegate:self)
-      if(theConnection)
-        @receivedData = NSMutableData.data
+    data = {key:'b1507316815a853a7a23318ff905a486', image:imageStr}
+p "HEEEEEEEEEEEEEEELLLLO"
+    BubbleWrap::HTTP.post("http://api.imgur.com/2/upload.json", {payload: data}) do |response|
+      if response.ok?
+        returned_str = response.body.to_str
+        p returned_str
+        json = BubbleWrap::JSON.parse(returned_str)
+        p json
+        original = json["original"]
+        delegate.imageUploadedWithURLString(original)
+      else
+        alert(response.error_message)
       end
     end
+    #NSLog("%@", imageStr)
+    ##uploadCall = NSString.stringWithFormat("key=b1507316815a853a7a23318ff905a486&image=%@", imageStr)
+    #Dispatch::Queue.main.sync do
+    #  uploadCall = "key=b1507316815a853a7a23318ff905a486&image="+imageStr
+    #  request = NSMutableURLRequest.requestWithURL(NSURL.URLWithString("http://api.imgur.com/2/upload"))
+    #  request.setHTTPMethod("POST")
+    #  request.setValue(NSString.stringWithFormat("%d", uploadCall.length), forHTTPHeaderField:("Content-length"))
+    #  request.setHTTPBody(uploadCall.dataUsingEncoding(NSUTF8StringEncoding))
+    #  theConnection = NSURLConnection.alloc.initWithRequest(request, delegate:self)
+    #  if(theConnection)
+    #    @receivedData = NSMutableData.data
+    #  end
+    #end
   end
 
   def connection(connection, didReceiveData:data)
